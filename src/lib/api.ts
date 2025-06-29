@@ -129,7 +129,8 @@ export const productsApi = {
         *,
         category:categories(*),
         brand:brands(*),
-        images:product_images(*)
+        images:product_images(*),
+        variants:product_variants(*)
       `)
       .eq('is_featured', true)
       .eq('is_active', true)
@@ -146,7 +147,8 @@ export const productsApi = {
         *,
         category:categories(*),
         brand:brands(*),
-        images:product_images(*)
+        images:product_images(*),
+        variants:product_variants(*)
       `)
       .eq('category_id', categoryId)
       .neq('id', productId)

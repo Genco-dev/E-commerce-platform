@@ -47,8 +47,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     ? calculateDiscount(product.price, product.sale_price)
     : 0;
 
-  const primaryImage = product.images.find(img => img.is_primary) || product.images[0];
+  const primaryImage = (product.images || []).find(img => img.is_primary) || (product.images || [])[0];
   const currentPrice = product.sale_price || product.price;
+  const variants = product.variants || [];
 
   return (
     <>
@@ -182,27 +183,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
             
             {/* Variants Preview */}
-            {product.variants.length > 0 && (
+            {variants.length > 0 && (
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <div className="flex space-x-1">
-                    {product.variants.slice(0, 4).map((variant, index) => (
+                    {variants.slice(0, 4).map((variant, index) => (
                       <div
                         key={index}
                         className="w-5 h-5 rounded-full border-2 border-gray-300 shadow-sm bg-gray-100"
                         title={variant.name}
                       />
                     ))}
-                    {product.variants.length > 4 && (
+                    {variants.length > 4 && (
                       <span className="text-xs text-gray-500 ml-1">
-                        +{product.variants.length - 4}
+                        +{variants.length - 4}
                       </span>
                     )}
                   </div>
                 </div>
                 
                 <div className="text-xs text-gray-500">
-                  {product.variants.length} options
+                  {variants.length} options
                 </div>
               </div>
             )}
