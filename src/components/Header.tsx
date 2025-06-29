@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingBag, User, Search, Menu, X, Heart } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
+import { useWishlist } from '../hooks/useWishlist';
 import { SearchBar } from './SearchBar';
 
 export const Header: React.FC = () => {
@@ -10,6 +11,7 @@ export const Header: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { user, signOut } = useAuthStore();
   const { getTotalItems } = useCartStore();
+  const { wishlistCount } = useWishlist();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -56,9 +58,19 @@ export const Header: React.FC = () => {
             </button>
 
             {/* Wishlist */}
-            <button className="p-2 text-gray-600 hover:text-indigo-600 transition-colors">
-              <Heart className="h-5 w-5" />
-            </button>
+            {user && (
+              <Link
+                to="/wishlist"
+                className="p-2 text-gray-600 hover:text-indigo-600 transition-colors relative"
+              >
+                <Heart className="h-5 w-5" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
+            )}
 
             {/* Cart */}
             <Link
@@ -91,6 +103,12 @@ export const Header: React.FC = () => {
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     Orders
+                  </Link>
+                  <Link
+                    to="/wishlist"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Wishlist
                   </Link>
                   {user.role === 'admin' && (
                     <Link
