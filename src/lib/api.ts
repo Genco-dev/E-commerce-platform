@@ -12,6 +12,15 @@ import {
   Analytics
 } from '../types';
 
+// Enhanced error handling for API calls
+const handleSupabaseError = (error: any) => {
+  // Add status code to error for better handling
+  if (error?.code === 'PGRST002') {
+    error.status = 503;
+    error.message = 'Service temporarily unavailable. Please try again later.';
+  }
+  throw error;
+};
 // Products API
 export const productsApi = {
   getAll: async (filters: SearchFilters = {}): Promise<PaginatedResponse<Product>> => {
@@ -90,7 +99,7 @@ export const productsApi = {
 
     const { data, error, count } = await query;
     
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
 
     return {
       data: data || [],
@@ -118,7 +127,7 @@ export const productsApi = {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data;
   },
 
@@ -136,7 +145,7 @@ export const productsApi = {
       .eq('is_active', true)
       .limit(limit);
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data || [];
   },
 
@@ -155,7 +164,7 @@ export const productsApi = {
       .eq('is_active', true)
       .limit(limit);
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data || [];
   },
 
@@ -164,7 +173,7 @@ export const productsApi = {
       product_id: productId
     });
     
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
   }
 };
 
@@ -177,7 +186,7 @@ export const categoriesApi = {
       .eq('is_active', true)
       .order('sort_order');
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data || [];
   },
 
@@ -188,7 +197,7 @@ export const categoriesApi = {
       .eq('is_active', true)
       .order('sort_order');
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     
     // Build hierarchy
     const categories = data || [];
@@ -223,7 +232,7 @@ export const ordersApi = {
       `)
       .single();
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data;
   },
 
@@ -238,7 +247,7 @@ export const ordersApi = {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data;
   },
 
@@ -256,7 +265,7 @@ export const ordersApi = {
       .order('created_at', { ascending: false })
       .range(from, to);
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
 
     return {
       data: data || [],
@@ -275,7 +284,7 @@ export const ordersApi = {
       .update({ status, updated_at: new Date().toISOString() })
       .eq('id', orderId);
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
   }
 };
 
@@ -296,7 +305,7 @@ export const reviewsApi = {
       .order('created_at', { ascending: false })
       .range(from, to);
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
 
     return {
       data: data || [],
@@ -319,7 +328,7 @@ export const reviewsApi = {
       `)
       .single();
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data;
   },
 
@@ -328,7 +337,7 @@ export const reviewsApi = {
       review_id: reviewId
     });
     
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
   }
 };
 
@@ -344,7 +353,7 @@ export const wishlistApi = {
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data || [];
   },
 
@@ -358,7 +367,7 @@ export const wishlistApi = {
       `)
       .single();
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data;
   },
 
@@ -369,7 +378,7 @@ export const wishlistApi = {
       .eq('user_id', userId)
       .eq('product_id', productId);
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
   },
 
   isInWishlist: async (userId: string, productId: string): Promise<boolean> => {
@@ -380,7 +389,7 @@ export const wishlistApi = {
       .eq('product_id', productId)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== 'PGRST116') handleSupabaseError(error);
     return !!data;
   }
 };
@@ -394,7 +403,7 @@ export const couponsApi = {
       cart_total: cartTotal
     });
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data;
   },
 
@@ -404,7 +413,7 @@ export const couponsApi = {
       user_id: userId
     });
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
   }
 };
 
@@ -415,7 +424,7 @@ export const analyticsApi = {
       period_days: period === '7d' ? 7 : period === '30d' ? 30 : 90
     });
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data;
   },
 
@@ -430,7 +439,7 @@ export const analyticsApi = {
       .order('sales_count', { ascending: false })
       .limit(limit);
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data || [];
   },
 
@@ -439,7 +448,7 @@ export const analyticsApi = {
       period_days: period === '7d' ? 7 : period === '30d' ? 30 : 90
     });
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data || [];
   }
 };
@@ -454,7 +463,7 @@ export const usersApi = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data;
   },
 
@@ -465,7 +474,7 @@ export const usersApi = {
       .eq('user_id', userId)
       .order('is_default', { ascending: false });
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data || [];
   },
 
@@ -476,7 +485,7 @@ export const usersApi = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data;
   },
 
@@ -488,7 +497,7 @@ export const usersApi = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
     return data;
   },
 
@@ -498,6 +507,6 @@ export const usersApi = {
       .delete()
       .eq('id', addressId);
 
-    if (error) throw error;
+    if (error) handleSupabaseError(error);
   }
 };
