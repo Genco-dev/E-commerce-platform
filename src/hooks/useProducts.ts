@@ -10,6 +10,14 @@ export function useProducts(filters: SearchFilters = {}) {
     {
       keepPreviousData: true,
       staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: (failureCount, error: any) => {
+        // Don't retry on 503 service unavailable errors
+        if (error?.status === 503) {
+          return false;
+        }
+        return failureCount < 3;
+      },
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     }
   );
 }
@@ -22,6 +30,13 @@ export function useInfiniteProducts(filters: SearchFilters = {}) {
       getNextPageParam: (lastPage) => 
         lastPage.has_next ? lastPage.page + 1 : undefined,
       keepPreviousData: true,
+      retry: (failureCount, error: any) => {
+        if (error?.status === 503) {
+          return false;
+        }
+        return failureCount < 3;
+      },
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     }
   );
 }
@@ -33,6 +48,13 @@ export function useProduct(id: string) {
     {
       enabled: !!id,
       staleTime: 10 * 60 * 1000, // 10 minutes
+      retry: (failureCount, error: any) => {
+        if (error?.status === 503) {
+          return false;
+        }
+        return failureCount < 3;
+      },
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     }
   );
 }
@@ -43,6 +65,13 @@ export function useFeaturedProducts(limit = 8) {
     () => productsApi.getFeatured(limit),
     {
       staleTime: 15 * 60 * 1000, // 15 minutes
+      retry: (failureCount, error: any) => {
+        if (error?.status === 503) {
+          return false;
+        }
+        return failureCount < 3;
+      },
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     }
   );
 }
@@ -54,6 +83,13 @@ export function useRelatedProducts(productId: string, categoryId: string, limit 
     {
       enabled: !!productId && !!categoryId,
       staleTime: 10 * 60 * 1000,
+      retry: (failureCount, error: any) => {
+        if (error?.status === 503) {
+          return false;
+        }
+        return failureCount < 3;
+      },
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     }
   );
 }

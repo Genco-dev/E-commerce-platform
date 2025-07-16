@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Star, Truck, Shield, RotateCcw, Heart } from 'lucide-react';
+import { ArrowRight, Star, Truck, Shield, RotateCcw, Heart, AlertCircle, RefreshCw } from 'lucide-react';
 import { ProductCard } from '../components/ProductCard';
 import { NewsletterSignup } from '../components/features/NewsletterSignup';
 import { RecentlyViewed } from '../components/features/RecentlyViewed';
@@ -10,7 +10,11 @@ import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { Skeleton } from '../components/ui/Skeleton';
 
 export const Home: React.FC = () => {
-  const { data: featuredProducts, isLoading } = useFeaturedProducts(8);
+  const { data: featuredProducts, isLoading, error, refetch } = useFeaturedProducts(8);
+
+  const handleRetry = () => {
+    refetch();
+  };
 
   return (
     <>
@@ -117,7 +121,24 @@ export const Home: React.FC = () => {
               </p>
             </div>
             
-            {isLoading ? (
+            {error ? (
+              <div className="text-center py-12">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-8 max-w-md mx-auto">
+                  <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-red-800 mb-2">Service Temporarily Unavailable</h3>
+                  <p className="text-red-600 mb-4">
+                    We're experiencing technical difficulties. Please try again in a few moments.
+                  </p>
+                  <button
+                    onClick={handleRetry}
+                    className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Try Again
+                  </button>
+                </div>
+              </div>
+            ) : isLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[...Array(8)].map((_, index) => (
                   <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -132,21 +153,29 @@ export const Home: React.FC = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                {featuredProducts?.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+                {featuredProducts && featuredProducts.length > 0 ? (
+                  featuredProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-12">
+                    <p className="text-gray-500 text-lg">No featured products available at the moment.</p>
+                  </div>
+                )}
               </div>
             )}
             
-            <div className="text-center">
-              <Link
-                to="/products"
-                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105"
-              >
-                View All Products
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </div>
+            {!error && (
+              <div className="text-center">
+                <Link
+                  to="/products"
+                  className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105"
+                >
+                  View All Products
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </div>
+            )}
           </div>
         </section>
 
