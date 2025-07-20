@@ -6,7 +6,14 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true,
-    port: 5173
+    port: 5173,
+    hmr: {
+      port: 5174
+    },
+    watch: {
+      usePolling: true,
+      interval: 1000
+    }
   },
   build: {
     rollupOptions: {
@@ -23,6 +30,7 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom']
+    include: ['react', 'react-dom', 'react-router-dom'],
+    force: true
   }
 })
