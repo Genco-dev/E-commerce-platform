@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Badge } from '../ui/Badge';
-import { Button } from '../ui/Button';
 import { Modal } from '../ui/Modal';
-import { Package, Eye, Edit, Truck } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { formatDate, formatPrice } from '../../lib/utils';
 import toast from 'react-hot-toast';
 

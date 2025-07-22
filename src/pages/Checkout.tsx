@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
 import { useForm } from 'react-hook-form';
+
 import { supabase } from '../lib/supabase';
 import { CreditCard, MapPin, Package, ArrowLeft, Lock } from 'lucide-react';
 
@@ -38,7 +39,7 @@ export const Checkout: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [sameAsShipping, setSameAsShipping] = useState(true);
   
-  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<CheckoutForm>({
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm<CheckoutForm>({
     defaultValues: {
       same_as_shipping: true,
       shipping_country: 'US',
@@ -99,8 +100,8 @@ export const Checkout: React.FC = () => {
         product_id: item.product.id,
         quantity: item.quantity,
         price: item.product.sale_price || item.product.price,
-        size: item.size,
-        color: item.color,
+                      size: item.size || '',
+                      color: item.color || '',
       }));
 
       const { error: itemsError } = await supabase
@@ -448,14 +449,14 @@ export const Checkout: React.FC = () => {
                 {items.map((item) => (
                   <div key={item.id} className="flex items-center space-x-4">
                     <img
-                      src={item.product.images[0] || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=100'}
+                      src={typeof item.product.images[0] === 'string' ? item.product.images[0] : 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=100'}
                       alt={item.product.name}
                       className="w-16 h-16 object-cover rounded-lg"
                     />
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium text-gray-900 truncate">{item.product.name}</h3>
                       <p className="text-sm text-gray-600">
-                        {item.size} • {item.color} • Qty: {item.quantity}
+                        {item.size || 'N/A'} • {item.color || 'N/A'} • Qty: {item.quantity}
                       </p>
                     </div>
                     <div className="text-right">

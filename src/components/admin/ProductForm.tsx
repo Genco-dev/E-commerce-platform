@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { supabase } from '../../lib/supabase';
 import { Button } from '../ui/Button';
 import { Modal } from '../ui/Modal';
-import { Upload, X, Plus } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface ProductFormData {
@@ -38,8 +38,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [images, setImages] = useState<string[]>(product?.images || []);
   const [variants, setVariants] = useState(product?.variants || []);
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [brands, setBrands] = useState<any[]>([]);
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<ProductFormData>({
     defaultValues: product ? {
@@ -117,7 +117,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   };
 
   const removeVariant = (index: number) => {
-    setVariants(variants.filter((_, i) => i !== index));
+    setVariants(variants.filter((_: any, i: number) => i !== index));
   };
 
   const updateVariant = (index: number, field: string, value: any) => {
@@ -305,7 +305,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             <input
               {...register('is_active')}
               type="checkbox"
-              defaultChecked
               className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
             />
             <label className="ml-2 text-sm text-gray-700">Active</label>

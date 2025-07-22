@@ -68,7 +68,7 @@ export const Cart: React.FC = () => {
               <div key={item.id} className="bg-white rounded-xl shadow-sm p-6">
                 <div className="flex items-center space-x-4">
                   <img
-                    src={item.product.images[0] || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=200'}
+                    src={typeof item.product.images[0] === 'string' ? item.product.images[0] : 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=200'}
                     alt={item.product.name}
                     className="w-24 h-24 object-cover rounded-lg"
                   />
@@ -76,9 +76,9 @@ export const Cart: React.FC = () => {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 mb-1">{item.product.name}</h3>
                     <div className="text-sm text-gray-600 mb-2">
-                      <span>Size: {item.size}</span>
+                      <span>Size: {item.size || 'N/A'}</span>
                       <span className="mx-2">•</span>
-                      <span>Color: {item.color}</span>
+                      <span>Color: {item.color || 'N/A'}</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       {item.product.sale_price ? (

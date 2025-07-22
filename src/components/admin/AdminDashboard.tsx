@@ -4,7 +4,6 @@ import { LoadingSpinner } from '../ui/LoadingSpinner';
 import { Badge } from '../ui/Badge';
 import { 
   TrendingUp, 
-  TrendingDown, 
   DollarSign, 
   ShoppingCart, 
   Users, 
@@ -146,9 +145,9 @@ export const AdminDashboard: React.FC = () => {
             <div className="text-3xl font-bold text-gray-900">
               {analytics?.conversion_rate.current.toFixed(2) || 0}%
             </div>
-            <Badge variant={analytics?.conversion_rate.trend === 'up' ? 'success' : 'warning'}>
-              {analytics?.conversion_rate.change_percentage > 0 ? '+' : ''}
-              {analytics?.conversion_rate.change_percentage.toFixed(1)}%
+          <Badge variant={analytics?.conversion_rate?.trend === 'up' ? 'success' : 'warning'}>
+              {analytics?.conversion_rate?.change_percentage && analytics.conversion_rate.change_percentage > 0 ? '+' : ''}
+              {analytics?.conversion_rate?.change_percentage?.toFixed(1)}%
             </Badge>
           </div>
           <p className="text-sm text-gray-600 mt-2">
