@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuthStore } from '../store/authStore';
-import { Eye, EyeOff, ShoppingBag, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, ShoppingBag } from 'lucide-react';
 
 interface RegisterForm {
   fullName: string;
@@ -18,9 +18,7 @@ export const Register: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { signUp } = useAuthStore();
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors }, setError, watch } = useForm<RegisterForm>();
-
-  const password = watch('password');
+  const { register, handleSubmit, formState: { errors }, setError } = useForm<RegisterForm>();
 
   const onSubmit = async (data: RegisterForm) => {
     if (data.password !== data.confirmPassword) {

@@ -24,7 +24,7 @@ export const Profile: React.FC = () => {
   const { user } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
   const [addresses, setAddresses] = useState<Address[]>([]);
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { register, handleSubmit, formState: { errors }, reset } = useForm<ProfileForm>();
 

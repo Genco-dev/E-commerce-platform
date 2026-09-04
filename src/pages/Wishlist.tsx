@@ -12,6 +12,7 @@ export const Wishlist: React.FC = () => {
   const { addItem } = useCartStore();
 
   const handleAddToCart = (item: any) => {
+    if (!item.product) return;
     addItem({
       product: item.product,
       quantity: 1,
@@ -65,8 +66,8 @@ export const Wishlist: React.FC = () => {
                 <div key={item.id} className="bg-white rounded-xl shadow-sm overflow-hidden group">
                   <div className="relative">
                     <img
-                      src={item.product.images?.[0]?.url || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=400'}
-                      alt={item.product.name}
+                      src={item.product?.images?.[0]?.url || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=400'}
+                      alt={item.product?.name || 'Product'}
                       className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <button
@@ -79,15 +80,15 @@ export const Wishlist: React.FC = () => {
                   
                   <div className="p-5">
                     <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-                      {item.product.name}
+                      {item.product?.name || 'Unknown Product'}
                     </h3>
                     
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center space-x-2">
                         <span className="text-lg font-bold text-indigo-600">
-                          {formatPrice(item.product.sale_price || item.product.price)}
+                          {formatPrice(item.product?.sale_price || item.product?.price || 0)}
                         </span>
-                        {item.product.sale_price && (
+                        {item.product?.sale_price && (
                           <span className="text-sm text-gray-500 line-through">
                             {formatPrice(item.product.price)}
                           </span>
@@ -97,14 +98,14 @@ export const Wishlist: React.FC = () => {
                     
                     <div className="flex space-x-2">
                       <Link
-                        to={`/product/${item.product.id}`}
+                        to={`/product/${item.product?.id || ''}`}
                         className="flex-1 text-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                       >
                         View Details
                       </Link>
                       <button
                         onClick={() => handleAddToCart(item)}
-                        disabled={item.product.stock_quantity === 0}
+                        disabled={item.product?.stock_quantity === 0}
                         className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                       >
                         <ShoppingBag className="h-4 w-4 mr-1" />

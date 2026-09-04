@@ -13,7 +13,7 @@ export const NewsletterSignup: React.FC = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const { register, handleSubmit, formState: { errors }, reset } = useForm<NewsletterFormData>();
 
-  const onSubmit = async (data: NewsletterFormData) => {
+  const onSubmit = async () => {
     try {
       // In production, integrate with email service (Mailchimp, SendGrid, etc.)
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call

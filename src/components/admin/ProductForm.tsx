@@ -37,9 +37,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [images, setImages] = useState<string[]>(product?.images || []);
-  const [variants, setVariants] = useState(product?.variants || []);
+
   const [categories, setCategories] = useState<any[]>([]);
-  const [brands, setBrands] = useState<any[]>([]);
+  const [, setBrands] = useState<any[]>([]);
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<ProductFormData>({
     defaultValues: product ? {
@@ -101,7 +101,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     if (files) {
       // In a real app, you would upload to a storage service
       // For now, we'll use placeholder URLs
-      const newImages = Array.from(files).map((file, index) => 
+      const newImages = Array.from(files).map((_file, index) => 
         `https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=400&${Date.now()}-${index}`
       );
       setImages([...images, ...newImages]);
@@ -112,19 +112,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     setImages(images.filter((_, i) => i !== index));
   };
 
-  const addVariant = () => {
-    setVariants([...variants, { name: '', sku: '', price: 0, stock_quantity: 0 }]);
-  };
 
-  const removeVariant = (index: number) => {
-    setVariants(variants.filter((_: any, i: number) => i !== index));
-  };
-
-  const updateVariant = (index: number, field: string, value: any) => {
-    const updated = [...variants];
-    updated[index] = { ...updated[index], [field]: value };
-    setVariants(updated);
-  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={product ? 'Edit Product' : 'Add Product'} size="xl">

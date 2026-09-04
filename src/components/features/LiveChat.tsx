@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Minimize2 } from 'lucide-react';
 import { Button } from '../ui/Button';
-import { useAuthStore } from '../../store/authStore';
 
 interface Message {
   id: string;
@@ -24,7 +23,6 @@ export const LiveChat: React.FC = () => {
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuthStore();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -61,7 +59,7 @@ export const LiveChat: React.FC = () => {
     }, 1000 + Math.random() * 2000);
   };
 
-  const getAgentResponse = (userMessage: string): string => {
+  const getAgentResponse = (_userMessage: string): string => {
     const responses = [
       "I'd be happy to help you with that! Let me check our current promotions.",
       "That's a great question! Our customer service team can provide more details.",

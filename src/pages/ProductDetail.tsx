@@ -55,6 +55,8 @@ export const ProductDetail: React.FC = () => {
       quantity,
       size: selectedSize,
       color: selectedColor,
+      selected_attributes: {},
+      added_at: new Date().toISOString(),
     });
   };
 
@@ -110,7 +112,7 @@ export const ProductDetail: React.FC = () => {
           <div className="space-y-4">
             <div className="aspect-square bg-white rounded-2xl overflow-hidden shadow-lg">
               <img
-                src={product.images[selectedImage] || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=600'}
+                src={product.images[selectedImage]?.url || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=600'}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
@@ -127,7 +129,7 @@ export const ProductDetail: React.FC = () => {
                     }`}
                   >
                     <img
-                      src={image}
+                      src={image.url}
                       alt={`${product.name} ${index + 1}`}
                       className="w-full h-full object-cover"
                     />

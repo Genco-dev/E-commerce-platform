@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Star, Truck, Shield, RotateCcw, Heart, AlertCircle, RefreshCw } from 'lucide-react';
+import { ArrowRight, Truck, Shield, RotateCcw, AlertCircle, RefreshCw } from 'lucide-react';
 import { ProductCard } from '../components/ProductCard';
 import { NewsletterSignup } from '../components/features/NewsletterSignup';
 import { RecentlyViewed } from '../components/features/RecentlyViewed';
 import { SEOHead } from '../components/seo/SEOHead';
 import { useFeaturedProducts } from '../hooks/useProducts';
-import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { Skeleton } from '../components/ui/Skeleton';
 
 export const Home: React.FC = () => {

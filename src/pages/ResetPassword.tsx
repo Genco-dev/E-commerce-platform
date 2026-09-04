@@ -16,9 +16,7 @@ export const ResetPassword: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { register, handleSubmit, formState: { errors }, setError, watch } = useForm<ResetPasswordForm>();
-
-  const password = watch('password');
+  const { register, handleSubmit, formState: { errors }, setError } = useForm<ResetPasswordForm>();
 
   useEffect(() => {
     // Check if we have the required tokens

@@ -73,6 +73,8 @@ export interface Product {
   meta_title?: string;
   meta_description?: string;
   tags: string[];
+  sizes: string[];
+  colors: string[];
   rating_average: number;
   rating_count: number;
   view_count: number;
@@ -135,6 +137,8 @@ export interface CartItem {
   product: Product;
   variant?: ProductVariant;
   quantity: number;
+  size?: string;
+  color?: string;
   selected_attributes: Record<string, string>;
   added_at: string;
 }

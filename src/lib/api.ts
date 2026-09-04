@@ -4,6 +4,7 @@ import {
   Category, 
   Order, 
   User, 
+  Address,
   SearchFilters, 
   PaginatedResponse,
   Review,

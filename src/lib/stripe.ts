@@ -3,7 +3,7 @@ export const loadStripe = async () => {
   if (typeof window === 'undefined') return null;
   
   const { loadStripe } = await import('@stripe/stripe-js');
-  return loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+  return loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 };
 
 export const createPaymentIntent = async (amount: number, currency = 'usd') => {

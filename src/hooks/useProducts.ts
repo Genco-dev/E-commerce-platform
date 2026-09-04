@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useInfiniteQuery } from 'react-query';
 import { productsApi } from '../lib/api';
-import { Product, SearchFilters, PaginatedResponse } from '../types';
+import { SearchFilters } from '../types';
 
 export function useProducts(filters: SearchFilters = {}) {
   return useQuery(
