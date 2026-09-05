@@ -15,9 +15,7 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [showQuickView, setShowQuickView] = useState(false);
   const { addItem } = useCartStore();
-  const { toggleWishlist, isInWishlistQuery } = useWishlist();
-
-  const { data: isInWishlist } = isInWishlistQuery(product.id);
+  const { toggleWishlist, isInWishlist } = useWishlist(product.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();

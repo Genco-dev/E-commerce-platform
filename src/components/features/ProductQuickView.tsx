@@ -24,15 +24,13 @@ export const ProductQuickView: React.FC<ProductQuickViewProps> = ({
   const [selectedVariant, setSelectedVariant] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
   const { addItem } = useCartStore();
-  const { toggleWishlist, isInWishlistQuery } = useWishlist();
+  const { toggleWishlist, isInWishlist } = useWishlist(product?.id || '');
 
   if (!product) return null;
 
   // Ensure product.images is always an array to prevent undefined errors
   const productImages = product.images || [];
   const productVariants = product.variants || [];
-
-  const { data: isInWishlist } = isInWishlistQuery(product.id);
   const discountPercentage = product.sale_price 
     ? calculateDiscount(product.price, product.sale_price)
     : 0;

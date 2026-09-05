@@ -3,7 +3,7 @@ import { wishlistApi } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import toast from 'react-hot-toast';
 
-export function useWishlist() {
+export function useWishlist(productId?: string) {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
 
@@ -16,12 +16,22 @@ export function useWishlist() {
     }
   );
 
+  const { data: isInWishlist } = useQuery(
+    ['wishlist-check', user?.id, productId],
+    () => user && productId ? wishlistApi.isInWishlist(user.id, productId) : false,
+    {
+      enabled: !!user && !!productId,
+      staleTime: 5 * 60 * 1000,
+    }
+  );
+
   const addToWishlistMutation = useMutation(
-    ({ productId }: { productId: string }) => 
+    ({ productId }: { productId: string }) =>
       wishlistApi.add(user!.id, productId),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['wishlist', user?.id]);
+        queryClient.invalidateQueries(['wishlist-check', user?.id]);
         toast.success('Added to wishlist');
       },
       onError: () => {
@@ -31,11 +41,12 @@ export function useWishlist() {
   );
 
   const removeFromWishlistMutation = useMutation(
-    ({ productId }: { productId: string }) => 
+    ({ productId }: { productId: string }) =>
       wishlistApi.remove(user!.id, productId),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['wishlist', user?.id]);
+        queryClient.invalidateQueries(['wishlist-check', user?.id]);
         toast.success('Removed from wishlist');
       },
       onError: () => {
@@ -43,16 +54,6 @@ export function useWishlist() {
       },
     }
   );
-
-  const isInWishlistQuery = (productId: string) => 
-    useQuery(
-      ['wishlist-check', user?.id, productId],
-      () => user ? wishlistApi.isInWishlist(user.id, productId) : false,
-      {
-        enabled: !!user && !!productId,
-        staleTime: 5 * 60 * 1000,
-      }
-    );
 
   const addToWishlist = (productId: string) => {
     if (!user) {
@@ -68,8 +69,8 @@ export function useWishlist() {
   };
 
   const toggleWishlist = (productId: string) => {
-    const isInWishlist = wishlistItems.some(item => item.product_id === productId);
-    if (isInWishlist) {
+    const inWishlist = wishlistItems.some(item => item.product_id === productId);
+    if (inWishlist) {
       removeFromWishlist(productId);
     } else {
       addToWishlist(productId);
@@ -82,7 +83,7 @@ export function useWishlist() {
     addToWishlist,
     removeFromWishlist,
     toggleWishlist,
-    isInWishlistQuery,
+    isInWishlist: !!isInWishlist,
     wishlistCount: wishlistItems.length,
   };
 }
