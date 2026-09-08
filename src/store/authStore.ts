@@ -9,11 +9,14 @@ interface AuthState {
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
   signOut: () => Promise<void>;
   initialize: () => Promise<void>;
+  setUser: (user: User | null) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   loading: true,
+
+  setUser: (user) => set({ user }),
 
   signIn: async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -88,22 +91,5 @@ export const useAuthStore = create<AuthState>((set) => ({
     } finally {
       set({ loading: false });
     }
-
-    // Listen for auth changes
-    supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        const { data: userData } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-
-        if (userData) {
-          set({ user: userData });
-        }
-      } else if (event === 'SIGNED_OUT') {
-        set({ user: null });
-      }
-    });
   },
 }));

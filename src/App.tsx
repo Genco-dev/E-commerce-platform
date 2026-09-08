@@ -8,6 +8,7 @@ import { ToastProvider } from './components/ui/Toast';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { LiveChat } from './components/features/LiveChat';
 import { useAuthStore } from './store/authStore';
+import { supabase } from './lib/supabase';
 import { analytics } from './lib/analytics';
 
 // Lazy load pages for better performance
@@ -50,11 +51,29 @@ const PageLoader = () => (
 );
 
 function App() {
-  const { initialize, user } = useAuthStore();
+  const { initialize, user, setUser } = useAuthStore();
 
   useEffect(() => {
     initialize();
   }, [initialize]);
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          const { data: userData } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+          if (userData) setUser(userData);
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+        }
+      }
+    );
+    return () => subscription.unsubscribe();
+  }, [setUser]);
 
   useEffect(() => {
     // Track user identification
