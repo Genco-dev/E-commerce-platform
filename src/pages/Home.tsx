@@ -62,13 +62,13 @@ export const Home: React.FC = () => {
               <div className="relative">
                 <div className="grid grid-cols-2 gap-4">
                   <img
-                    src="https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=400"
+                    src="https://images.pexels.com/photos/18731383/pexels-photo-18731383.jpeg?auto=compress&cs=tinysrgb&w=400"
                     alt="Fashion Model 1"
                     className="rounded-2xl shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500"
                     loading="lazy"
                   />
                   <img
-                    src="https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=400"
+                    src="https://images.pexels.com/photos/18659922/pexels-photo-18659922.jpeg?auto=compress&cs=tinysrgb&w=400"
                     alt="Fashion Model 2"
                     className="rounded-2xl shadow-2xl transform -rotate-3 hover:rotate-0 transition-transform duration-500 mt-8"
                     loading="lazy"
@@ -192,7 +192,7 @@ export const Home: React.FC = () => {
                 className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all transform hover:scale-105"
               >
                 <img
-                  src="https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=600"
+                  src="https://images.pexels.com/photos/35083280/pexels-photo-35083280.jpeg?auto=compress&cs=tinysrgb&w=600"
                   alt="Women's Fashion"
                   className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
                   loading="lazy"
@@ -209,7 +209,7 @@ export const Home: React.FC = () => {
                 className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all transform hover:scale-105"
               >
                 <img
-                  src="https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg?auto=compress&cs=tinysrgb&w=600"
+                  src="https://images.pexels.com/photos/6050412/pexels-photo-6050412.jpeg?auto=compress&cs=tinysrgb&w=600"
                   alt="Men's Fashion"
                   className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
                   loading="lazy"
@@ -226,7 +226,7 @@ export const Home: React.FC = () => {
                 className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all transform hover:scale-105"
               >
                 <img
-                  src="https://images.pexels.com/photos/1927259/pexels-photo-1927259.jpeg?auto=compress&cs=tinysrgb&w=600"
+                  src="https://images.pexels.com/photos/1132269/pexels-photo-1132269.jpeg?auto=compress&cs=tinysrgb&w=600"
                   alt="Accessories"
                   className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
                   loading="lazy"
