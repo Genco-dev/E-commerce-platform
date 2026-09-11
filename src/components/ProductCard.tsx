@@ -5,7 +5,7 @@ import { Product } from '../types';
 import { useCartStore } from '../store/cartStore';
 import { useWishlist } from '../hooks/useWishlist';
 import { ProductQuickView } from './features/ProductQuickView';
-import { formatPrice, calculateDiscount, optimizeImageUrl } from '../lib/utils';
+import { formatPrice, calculateDiscount } from '../lib/utils';
 import { Badge } from './ui/Badge';
 
 interface ProductCardProps {
@@ -55,7 +55,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
           <div className="relative overflow-hidden">
             <img
-              src={optimizeImageUrl(primaryImage?.url || '/placeholder-image.jpg', 400, 400)}
+              src={primaryImage?.url || '/placeholder-image.jpg'}
               alt={primaryImage?.alt_text || product.name}
               className="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-500"
               loading="lazy"

@@ -33,7 +33,10 @@ export const Products: React.FC = () => {
         .from('products')
         .select(`
           *,
-          category:categories(*)
+          category:categories(*),
+          brand:brands(*),
+          images:product_images(*),
+          variants:product_variants(*)
         `);
 
       if (selectedCategory) {
