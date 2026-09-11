@@ -1,4 +1,4 @@
-import{s as x,j as e}from"./index-buPxhZ89.js";import{r as a}from"./vendor-CTke1Foc.js";import{c as m,L as i}from"./router-WmgKXWGM.js";import{C as h,o as p,T as g,s as u,f as j}from"./ui-Nvp9b9kT.js";import"./charts-BFGg3v9t.js";import"./state-BoPezyu0.js";const C=()=>{const{orderId:t}=m(),[r,d]=a.useState(null),[n,c]=a.useState(!0);a.useEffect(()=>{t&&o()},[t]);const o=async()=>{try{const{data:s,error:l}=await x.from("orders").select(`
+import{s as x,j as e}from"./index-Q_mlCcMV.js";import{r as a}from"./vendor-CTke1Foc.js";import{c as m,L as i}from"./router-WmgKXWGM.js";import{C as h,o as p,T as g,s as u,f as j}from"./ui-Nvp9b9kT.js";import"./charts-BFGg3v9t.js";import"./state-BoPezyu0.js";const C=()=>{const{orderId:t}=m(),[r,d]=a.useState(null),[n,c]=a.useState(!0);a.useEffect(()=>{t&&o()},[t]);const o=async()=>{try{const{data:s,error:l}=await x.from("orders").select(`
           *,
           order_items (
             *,
