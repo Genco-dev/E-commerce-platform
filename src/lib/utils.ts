@@ -170,17 +170,18 @@ export function generateMetaDescription(product: any): string {
   return `${name} - ${priceText}. ${desc}... Shop now with free shipping!`;
 }
 
-export function optimizeImageUrl(url: string, width?: number, height?: number, quality = 80): string {
+export function optimizeImageUrl(url: string, width?: number, height?: number, _quality = 80): string {
   if (!url || url.startsWith('data:')) return url;
-  
-  // For production, integrate with image optimization service like Cloudinary
-  const params = new URLSearchParams();
-  if (width) params.set('w', width.toString());
-  if (height) params.set('h', height.toString());
-  params.set('q', quality.toString());
-  params.set('f', 'auto');
-  
-  return `${url}?${params.toString()}`;
+  if (!url.startsWith('http')) return url;
+
+  try {
+    const parsed = new URL(url);
+    if (width) parsed.searchParams.set('w', width.toString());
+    if (height) parsed.searchParams.set('h', height.toString());
+    return parsed.toString();
+  } catch {
+    return url;
+  }
 }
 
 export function trackEvent(eventName: string, properties?: Record<string, any>): void {
