@@ -18,7 +18,7 @@ interface Order {
     product: {
       id: string;
       name: string;
-      images: string[];
+      images: Array<{ url: string; alt_text?: string; is_primary: boolean }>;
     };
   }>;
 }
@@ -45,7 +45,7 @@ export const OrderConfirmation: React.FC = () => {
             product:products (
               id,
               name,
-              images
+              images:product_images(*)
             )
           )
         `)
@@ -129,7 +129,7 @@ export const OrderConfirmation: React.FC = () => {
               {order.order_items.map((item) => (
                 <div key={item.id} className="flex items-center space-x-4 pb-6 border-b border-gray-200 last:border-b-0">
                   <img
-                    src={item.product.images[0] || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=100'}
+                    src={item.product.images?.[0]?.url || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=100'}
                     alt={item.product.name}
                     className="w-20 h-20 object-cover rounded-lg"
                   />

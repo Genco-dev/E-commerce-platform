@@ -24,7 +24,9 @@ export const SearchResults: React.FC = () => {
         .from('products')
         .select(`
           *,
-          category:categories(*)
+          category:categories(*),
+          brand:brands(*),
+          images:product_images(*)
         `)
         .or(`name.ilike.%${query}%,description.ilike.%${query}%`)
         .order('name');

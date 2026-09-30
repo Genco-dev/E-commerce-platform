@@ -29,7 +29,9 @@ export const ProductDetail: React.FC = () => {
         .from('products')
         .select(`
           *,
-          category:categories(*)
+          category:categories(*),
+          brand:brands(*),
+          images:product_images(*)
         `)
         .eq('id', id)
         .single();
@@ -37,8 +39,8 @@ export const ProductDetail: React.FC = () => {
       if (error) throw error;
       
       setProduct(data);
-      if (data.sizes.length > 0) setSelectedSize(data.sizes[0]);
-      if (data.colors.length > 0) setSelectedColor(data.colors[0]);
+      if (data.sizes?.length > 0) setSelectedSize(data.sizes[0]);
+      if (data.colors?.length > 0) setSelectedColor(data.colors[0]);
     } catch (error) {
       console.error('Error fetching product:', error);
       navigate('/products');

@@ -5,30 +5,27 @@ import { useAuthStore } from '../store/authStore';
 import { useForm } from 'react-hook-form';
 
 import { supabase } from '../lib/supabase';
-import { CreditCard, MapPin, Package, ArrowLeft, Lock } from 'lucide-react';
+import { CreditCard, MapPin, Package, ArrowLeft, Lock, Truck, Wallet } from 'lucide-react';
 
 interface CheckoutForm {
-  // Shipping Address
   shipping_street: string;
   shipping_city: string;
   shipping_state: string;
   shipping_postal_code: string;
   shipping_country: string;
-  
-  // Billing Address
+
   billing_street: string;
   billing_city: string;
   billing_state: string;
   billing_postal_code: string;
   billing_country: string;
-  
-  // Payment
+
+  payment_method: 'cod' | 'card';
   card_number: string;
   expiry_date: string;
   cvv: string;
   cardholder_name: string;
-  
-  // Options
+
   same_as_shipping: boolean;
 }
 
@@ -38,12 +35,14 @@ export const Checkout: React.FC = () => {
   const { user } = useAuthStore();
   const [isProcessing, setIsProcessing] = useState(false);
   const [sameAsShipping, setSameAsShipping] = useState(true);
-  
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'card'>('cod');
+
   const { register, handleSubmit, formState: { errors }, setValue } = useForm<CheckoutForm>({
     defaultValues: {
       same_as_shipping: true,
       shipping_country: 'US',
       billing_country: 'US',
+      payment_method: 'cod',
     }
   });
 
@@ -52,6 +51,13 @@ export const Checkout: React.FC = () => {
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
 
+  const getProductImage = (product: any): string => {
+    const images = product.images;
+    if (!images || images.length === 0) return 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=100';
+    if (typeof images[0] === 'string') return images[0];
+    return images[0]?.url || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=100';
+  };
+
   const onSubmit = async (data: CheckoutForm) => {
     if (!user) {
       navigate('/login');
@@ -59,9 +65,8 @@ export const Checkout: React.FC = () => {
     }
 
     setIsProcessing(true);
-    
+
     try {
-      // Create shipping address
       const shippingAddress = {
         street: data.shipping_street,
         city: data.shipping_city,
@@ -70,7 +75,6 @@ export const Checkout: React.FC = () => {
         country: data.shipping_country,
       };
 
-      // Create billing address
       const billingAddress = sameAsShipping ? shippingAddress : {
         street: data.billing_street,
         city: data.billing_city,
@@ -79,13 +83,14 @@ export const Checkout: React.FC = () => {
         country: data.billing_country,
       };
 
-      // Create order
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
           user_id: user.id,
           total_amount: total,
           status: 'pending',
+          payment_status: paymentMethod === 'cod' ? 'pending' : 'pending',
+          payment_method: paymentMethod,
           shipping_address: shippingAddress,
           billing_address: billingAddress,
         })
@@ -94,14 +99,13 @@ export const Checkout: React.FC = () => {
 
       if (orderError) throw orderError;
 
-      // Create order items
       const orderItems = items.map(item => ({
         order_id: order.id,
         product_id: item.product.id,
         quantity: item.quantity,
         price: item.product.sale_price || item.product.price,
-                      size: item.size || '',
-                      color: item.color || '',
+        size: item.size || '',
+        color: item.color || '',
       }));
 
       const { error: itemsError } = await supabase
@@ -110,10 +114,9 @@ export const Checkout: React.FC = () => {
 
       if (itemsError) throw itemsError;
 
-      // Clear cart and redirect
       clearCart();
       navigate(`/order-confirmation/${order.id}`);
-      
+
     } catch (error) {
       console.error('Error processing order:', error);
       alert('There was an error processing your order. Please try again.');
@@ -182,7 +185,7 @@ export const Checkout: React.FC = () => {
                   <MapPin className="h-5 w-5 mr-2" />
                   Shipping Address
                 </h2>
-                
+
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -197,7 +200,7 @@ export const Checkout: React.FC = () => {
                       <p className="mt-1 text-sm text-red-600">{errors.shipping_street.message}</p>
                     )}
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       City
@@ -211,7 +214,7 @@ export const Checkout: React.FC = () => {
                       <p className="mt-1 text-sm text-red-600">{errors.shipping_city.message}</p>
                     )}
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       State
@@ -225,7 +228,7 @@ export const Checkout: React.FC = () => {
                       <p className="mt-1 text-sm text-red-600">{errors.shipping_state.message}</p>
                     )}
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Postal Code
@@ -239,7 +242,7 @@ export const Checkout: React.FC = () => {
                       <p className="mt-1 text-sm text-red-600">{errors.shipping_postal_code.message}</p>
                     )}
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Country
@@ -276,7 +279,7 @@ export const Checkout: React.FC = () => {
                     <span className="ml-2 text-sm text-gray-600">Same as shipping</span>
                   </label>
                 </div>
-                
+
                 {!sameAsShipping && (
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
@@ -289,7 +292,7 @@ export const Checkout: React.FC = () => {
                         placeholder="123 Main Street"
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         City
@@ -300,7 +303,7 @@ export const Checkout: React.FC = () => {
                         placeholder="New York"
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         State
@@ -311,7 +314,7 @@ export const Checkout: React.FC = () => {
                         placeholder="NY"
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Postal Code
@@ -322,7 +325,7 @@ export const Checkout: React.FC = () => {
                         placeholder="10001"
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Country
@@ -340,92 +343,148 @@ export const Checkout: React.FC = () => {
                 )}
               </div>
 
-              {/* Payment Information */}
+              {/* Payment Method */}
               <div className="bg-white rounded-xl shadow-sm p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                   <Lock className="h-5 w-5 mr-2" />
-                  Payment Information
+                  Payment Method
                 </h2>
-                
+
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Cardholder Name
-                    </label>
-                    <input
-                      {...register('cardholder_name', { required: 'Cardholder name is required' })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                      placeholder="John Doe"
-                    />
-                    {errors.cardholder_name && (
-                      <p className="mt-1 text-sm text-red-600">{errors.cardholder_name.message}</p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Card Number
-                    </label>
-                    <input
-                      {...register('card_number', { 
-                        required: 'Card number is required',
-                        pattern: {
-                          value: /^[0-9]{16}$/,
-                          message: 'Please enter a valid 16-digit card number'
-                        }
-                      })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                      placeholder="1234 5678 9012 3456"
-                      maxLength={16}
-                    />
-                    {errors.card_number && (
-                      <p className="mt-1 text-sm text-red-600">{errors.card_number.message}</p>
-                    )}
-                  </div>
-                  
+                  {/* Payment Method Selection */}
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Expiry Date
-                      </label>
-                      <input
-                        {...register('expiry_date', { 
-                          required: 'Expiry date is required',
-                          pattern: {
-                            value: /^(0[1-9]|1[0-2])\/([0-9]{2})$/,
-                            message: 'Please enter MM/YY format'
-                          }
-                        })}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                        placeholder="MM/YY"
-                        maxLength={5}
-                      />
-                      {errors.expiry_date && (
-                        <p className="mt-1 text-sm text-red-600">{errors.expiry_date.message}</p>
-                      )}
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        CVV
-                      </label>
-                      <input
-                        {...register('cvv', { 
-                          required: 'CVV is required',
-                          pattern: {
-                            value: /^[0-9]{3,4}$/,
-                            message: 'Please enter a valid CVV'
-                          }
-                        })}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                        placeholder="123"
-                        maxLength={4}
-                      />
-                      {errors.cvv && (
-                        <p className="mt-1 text-sm text-red-600">{errors.cvv.message}</p>
-                      )}
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => { setPaymentMethod('cod'); setValue('payment_method', 'cod'); }}
+                      className={`flex items-center justify-center space-x-3 p-4 border-2 rounded-lg transition-all ${
+                        paymentMethod === 'cod'
+                          ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                      }`}
+                    >
+                      <Truck className="h-6 w-6" />
+                      <div className="text-left">
+                        <p className="font-medium">Cash on Delivery</p>
+                        <p className="text-xs opacity-75">Pay when you receive</p>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => { setPaymentMethod('card'); setValue('payment_method', 'card'); }}
+                      className={`flex items-center justify-center space-x-3 p-4 border-2 rounded-lg transition-all ${
+                        paymentMethod === 'card'
+                          ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                      }`}
+                    >
+                      <CreditCard className="h-6 w-6" />
+                      <div className="text-left">
+                        <p className="font-medium">Credit Card</p>
+                        <p className="text-xs opacity-75">Visa, Mastercard</p>
+                      </div>
+                    </button>
                   </div>
+
+                  {/* Card Details (only for card payment) */}
+                  {paymentMethod === 'card' && (
+                    <div className="space-y-4 pt-4 border-t border-gray-200">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Cardholder Name
+                        </label>
+                        <input
+                          {...register('cardholder_name', { required: paymentMethod === 'card' && 'Cardholder name is required' })}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                          placeholder="John Doe"
+                        />
+                        {errors.cardholder_name && (
+                          <p className="mt-1 text-sm text-red-600">{errors.cardholder_name.message}</p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Card Number
+                        </label>
+                        <input
+                          {...register('card_number', {
+                            required: paymentMethod === 'card' && 'Card number is required',
+                            pattern: {
+                              value: /^[0-9]{16}$/,
+                              message: 'Please enter a valid 16-digit card number'
+                            }
+                          })}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                          placeholder="1234 5678 9012 3456"
+                          maxLength={16}
+                        />
+                        {errors.card_number && (
+                          <p className="mt-1 text-sm text-red-600">{errors.card_number.message}</p>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Expiry Date
+                          </label>
+                          <input
+                            {...register('expiry_date', {
+                              required: paymentMethod === 'card' && 'Expiry date is required',
+                              pattern: {
+                                value: /^(0[1-9]|1[0-2])\/([0-9]{2})$/,
+                                message: 'Please enter MM/YY format'
+                              }
+                            })}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder="MM/YY"
+                            maxLength={5}
+                          />
+                          {errors.expiry_date && (
+                            <p className="mt-1 text-sm text-red-600">{errors.expiry_date.message}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            CVV
+                          </label>
+                          <input
+                            {...register('cvv', {
+                              required: paymentMethod === 'card' && 'CVV is required',
+                              pattern: {
+                                value: /^[0-9]{3,4}$/,
+                                message: 'Please enter a valid CVV'
+                              }
+                            })}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder="123"
+                            maxLength={4}
+                          />
+                          {errors.cvv && (
+                            <p className="mt-1 text-sm text-red-600">{errors.cvv.message}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-2 p-3 bg-amber-50 rounded-lg">
+                        <Wallet className="h-4 w-4 text-amber-600 flex-shrink-0" />
+                        <p className="text-xs text-amber-800">
+                          Your payment will be processed securely. We do not store your card details.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {paymentMethod === 'cod' && (
+                    <div className="flex items-center space-x-2 p-3 bg-green-50 rounded-lg">
+                      <Truck className="h-4 w-4 text-green-600 flex-shrink-0" />
+                      <p className="text-sm text-green-800">
+                        Pay with cash when your order is delivered. No payment required now.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -444,12 +503,12 @@ export const Checkout: React.FC = () => {
           <div className="lg:sticky lg:top-8 h-fit">
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
-              
+
               <div className="space-y-4 mb-6">
                 {items.map((item) => (
                   <div key={item.id} className="flex items-center space-x-4">
                     <img
-                      src={typeof item.product.images[0] === 'string' ? item.product.images[0] : 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=100'}
+                      src={getProductImage(item.product)}
                       alt={item.product.name}
                       className="w-16 h-16 object-cover rounded-lg"
                     />
@@ -467,25 +526,25 @@ export const Checkout: React.FC = () => {
                   </div>
                 ))}
               </div>
-              
+
               <div className="border-t border-gray-200 pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Subtotal</span>
                   <span className="font-medium">${subtotal.toFixed(2)}</span>
                 </div>
-                
+
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Shipping</span>
                   <span className="font-medium">
                     {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
                   </span>
                 </div>
-                
+
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Tax</span>
                   <span className="font-medium">${tax.toFixed(2)}</span>
                 </div>
-                
+
                 <div className="border-t border-gray-200 pt-2">
                   <div className="flex justify-between text-lg font-semibold">
                     <span>Total</span>

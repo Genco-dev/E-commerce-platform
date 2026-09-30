@@ -68,7 +68,7 @@ export const Cart: React.FC = () => {
               <div key={item.id} className="bg-white rounded-xl shadow-sm p-6">
                 <div className="flex items-center space-x-4">
                   <img
-                    src={typeof item.product.images[0] === 'string' ? item.product.images[0] : 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=200'}
+                    src={(item.product.images?.[0] as any)?.url || (typeof item.product.images?.[0] === 'string' ? item.product.images[0] : '') || 'https://images.pexels.com/photos/996329/pexels-photo-996329.jpeg?auto=compress&cs=tinysrgb&w=200'}
                     alt={item.product.name}
                     className="w-24 h-24 object-cover rounded-lg"
                   />
